@@ -2,5 +2,19 @@
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter"
     },
-    "python.formatting.provider": "none"
+    "python.formatting.provider": "none",
+    "files.associations": {
+        "array": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "string": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "string_view": "cpp",
+        "format": "cpp",
+        "initializer_list": "cpp",
+        "span": "cpp",
+        "cstdint": "cpp",
+        "cstddef": "cpp"
+    }
 }
