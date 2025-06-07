@@ -11,11 +11,16 @@ leds = [0b11111111, 0b00000000]  # [LINHA, COLUNA]
 arduino.write(bytearray(leds))
 
 time.sleep(1)
-# Enviar comando # Desliga o LED
-leds = [0b00000010, 0b11111101]  # [LINHA, COLUNA] = 7G
-arduino.write(bytearray(leds))
 
-linhas = [l.decode().strip() for l in arduino.readlines()]
-print(f"Arduino respondeu: {linhas}")
+while (1) :
+
+    # Enviar comando # Desliga o LED
+    leds = [0b00000010, 0b11111101]  # [LINHA, COLUNA] = 7G
+    arduino.write(bytearray(leds))
+
+    # Enviar comando # Desliga o LED
+    leds = [0b00000100, 0b11111101]  # [LINHA, COLUNA] = 7G
+    arduino.write(bytearray(leds))
+
 
 arduino.close()

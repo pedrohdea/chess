@@ -21,20 +21,17 @@ void loop() {
     uint8_t linha = Serial.read();  // LINHA LSB (coils 0–7)
     uint8_t coluna = Serial.read(); // COLUNA MSB (coils 8–15)
     digitalWrite(LED_STATUS, HIGH); // Liga LED
- 
-    // Print binário dos dois bytes
-    Serial.print("Recebido -> linha: ");
-    Serial.print(linha, BIN);
-    Serial.print(" | coluna: ");
-    Serial.println(coluna, BIN);
-    delay(1000);
-    digitalWrite(LED_STATUS, LOW); // Liga LED
 
     uint8_t leds[2];
     leds[0] = linha;
     leds[1] = coluna;
 
+    uint8_t limpar[2] = {0b00000000, 0b11111111};
+    escreverShiftRegister(limpar);
+    delay(10);
     escreverShiftRegister(leds);  // Atualiza os registradores
+    delay(1000);
+    digitalWrite(LED_STATUS, LOW); // Liga LED
   }
 }
 
