@@ -5,7 +5,6 @@
 #define LATCH_PIN 10 //RCLK
 
 #define BAUDRATE   9600
-#define GAP_LED    5000  // Timeout para leitura serial
 
 uint8_t ledsDe[2];
 uint8_t ledsPara[2];
@@ -93,14 +92,12 @@ void setup() {
 
   Serial.begin(BAUDRATE);
   Serial.println("V1.0");
-  Serial.setTimeout(GAP_LED);
   limparComandos();
   delay(500);
 }
 
 void loop() {
-  readSerial(); // espera o tempo de GAP_LED que é o timeout da serial
+  readSerial();
   escreverShiftRegister(ledsDe);
-  readSerial(); // espera o tempo de GAP_LED que é o timeout da serial
   escreverShiftRegister(ledsPara);
 }
