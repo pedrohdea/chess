@@ -7,5 +7,5 @@ requests
 stockfish
 pytest-runner
 pi74HC595==1.2.3
-opencv-python==3.4.18.65
-ultralytics
+opencv-python==4.*
+ultralytics==8.*
