@@ -1,29 +1,24 @@
-from ultralytics import YOLO
-from PIL import Image
-import cv2
+import cv2                     # OpenCV para carregar e manipular imagens
+from ultralytics import YOLO  # Biblioteca Ultralytics com modelo YOLOv8
+import time                   # Para medir o tempo de execução
 
-model = YOLO("model_.onnx")
-# accepts all formats - image/dir/Path/URL/video/PIL/ndarray. 0 for webcam
-# results = model.predict(source="0")
-# results = model.predict(source="folder", show=True) # Display preds. Accepts all YOLO predict arguments
+# Carrega o modelo YOLO treinado (substitua pelo caminho correto do seu modelo)
+model = YOLO("runs/detect/train2/weights/best.pt")
 
-# from PIL
-im1 = Image.open("negativas/1701128875.2898896.jpg")
-results = model.predict(source=im1, save=True)  # save plotted images
-print(results)
-assert len(results[0].boxes) == 2
-vertices = results[0].boxes[1].data.tolist()[0]
-x = ((vertices[2] - vertices[0]) / 2) + vertices[0]
-y = ((vertices[3] - vertices[1]) / 2) + vertices[1]
-print(x, y)
+# Marca o tempo de início da inferência
+start = time.time()
+print('Início:', time.strftime('%H:%M:%S', time.localtime(start)))
 
-from IPython import embed
+# Carrega a imagem de teste
+img = cv2.imread('positivas/1749319728.0928051.jpg')
 
-embed(header='')
+# Realiza a inferência na imagem
+results = model(img)
 
-# # from ndarray
-# im2 = cv2.imread("bus.jpg")
-# results = model.predict(source=im2, save=True, save_txt=True)  # save predictions as labels
+# Marca o tempo de fim da inferência
+end = time.time()
+print('Fim:', time.strftime('%H:%M:%S', time.localtime(end)))
+print(f'Duração: {end - start:.3f} segundos')
 
-# # from list of PIL/ndarray
-# results = model.predict(source=[im1, im2])
+# Exibe a imagem com as detecções em uma janela (usa backend interno da Ultralytics)
+results[0].show()

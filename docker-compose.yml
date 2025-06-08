@@ -1,8 +1,13 @@
-version: '3.7'
+version: '3.8'
 
 services:
-  opencv:
-    build: .
-    network_mode: 'host'
+  yolov8:
+    image: ultralytics/ultralytics:latest
+    container_name: yolov8
+    working_dir: /workspace
     volumes:
-        - ./:/app
+      - ./dataset:/workspace/dataset         # Dataset local
+      - ./runs:/workspace/runs               # Resultados do treino
+    stdin_open: true
+    tty: true
+    command: yolo detect train data=dataset/data.yaml model=yolov8n.pt epochs=100 imgsz=640,360 batch=32

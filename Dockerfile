@@ -1,18 +1,11 @@
-FROM chennavarri/ubuntu_opencv_python
+# Usa a imagem oficial com YOLOv8 + Python pré-instalado
+FROM ultralytics/ultralytics:latest
 
-WORKDIR /app
-COPY . /app/
+# Define diretório de trabalho
+WORKDIR /workspace
 
-ENV DISPLAY=10.202.5.30:0
+# Copia o dataset (opcional — melhor montar via volume)
+# COPY ./dataset /workspace/dataset
 
-# RUN apt-get install -y openssl
-
-# RUN pip install --upgrade pip
-# RUN pip install requests
-# RUN pip install flask
-
-# COPY requirements.txt /app/
-# RUN pip install -r requirements.txt
-
-# ENV PYTHONPATH=/app
-
+# Comando padrão: apenas abre shell
+CMD ["bash"]

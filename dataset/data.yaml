@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 1
+names: ['piece']
+
+roboflow:
+  workspace: chess-bjkwh
+  project: chess-3d
+  version: 2
+  license: MIT
+  url: https://universe.roboflow.com/chess-bjkwh/chess-3d/dataset/2

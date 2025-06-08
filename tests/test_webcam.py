@@ -11,7 +11,7 @@ if not cat_cascade.load(cv.samples.findFile(cat_cascade_name)):
     exit(0)
 
 
-cap = cv.VideoCapture(2)
+cap = cv.VideoCapture(0)
 
 if not cap.isOpened:
     print('--(!)Error opening video capture')
@@ -31,5 +31,7 @@ while True:
         break
     elif key == ord('p'):
         cv.imwrite('positivas/{}.jpg'.format(loop_time), frame)
+        print('imagem positiva salva')
     elif key == ord('n'):
         cv.imwrite('negativas/{}.jpg'.format(loop_time), frame)
+        print('imagem negativa salva')

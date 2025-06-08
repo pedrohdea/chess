@@ -62,6 +62,10 @@ Você também pode utilizar a API do **Roboflow** para detecção de imagens:
 base64 negativas/1701128875.2898896.jpg | curl -d @- "https://detect.roboflow.com/chess-4jvm8/1?api_key=Yc9P3iOmEuSts3mFZLd3"
 ```
 
+## Treinamento com ROBOFLOW:
+```
+yolo detect train data=dataset/data.yaml model=yolov8n.pt epochs=100 imgsz=640,360 augment=True
+```
 ---
 
 ## Uso com Docker

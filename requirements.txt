@@ -3,6 +3,7 @@ pandas
 Pillow
 pytest
 iPython
+black
 requests
 stockfish
 pytest-runner

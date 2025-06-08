@@ -14,8 +14,8 @@ def get_vertice(box):
     return int(x), int(y), int(w), int(h)
 
 
-MODEL = YOLO("data/model_.onnx")
-
+# MODEL = YOLO("data/model_.onnx")
+MODEL = YOLO('yolov8n.pt')  # ou 'path/to/seu_modelo.pt'
 
 def get_predict(img: MatLike) -> list:
     logging.info('predizendo imagem')
