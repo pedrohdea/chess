@@ -14,7 +14,9 @@ INPUT_SIZE = 640
 
 # === INICIALIZA MODELO ONNX ===
 print("[INFO] Carregando modelo ONNX...")
-session = ort.InferenceSession(MODEL_PATH, providers=["CPUExecutionProvider"])
+session = ort.InferenceSession(
+    MODEL_PATH, providers=["OpenVINOExecutionProvider", "CPUExecutionProvider"]
+)
 input_name = session.get_inputs()[0].name
 output_name = session.get_outputs()[0].name
 print(f"[DEBUG] Nome do input: {input_name}")
@@ -59,16 +61,6 @@ try:
         frame = draw_squares(pred, frame, ratio, dwdh)
 
         # === EXIBIÇÃO ===
-        # fps = 1 / (end - start)
-        # # cv2.putText(
-        # #     frame,
-        # #     f"FPS: {fps:.1f}",
-        # #     (10, 20),
-        # #     cv2.FONT_HERSHEY_SIMPLEX,
-        # #     0.6,
-        # #     (0, 255, 0),
-        # #     2,
-        # # )
         cv2.imshow("YOLO ONNX Webcam", frame)
 
         if cv2.waitKey(1) & 0xFF == ord("q"):
