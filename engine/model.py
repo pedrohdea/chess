@@ -1,6 +1,27 @@
+def get_vertices(box):
+    x1, y1, x2, y2 = box
+    w = x2 - x1
+    h = y2 - y1
+    x = x1 + w / 2
+    y = y1 + h / 2
+    return int(x), int(y), int(w), int(h)
+
+
 class Peca:
-    vertice = 0, 0
-    multi = 0
+    def __init__(self, det, dw: float, dh: float, ratio: float):
+        # Corrige as coordenadas da predição ONNX para o espaço original da imagem
+        x1 = (det[0] - dw) / ratio
+        y1 = (det[1] - dh) / ratio
+        x2 = (det[2] - dw) / ratio
+        y2 = (det[3] - dh) / ratio
+
+        w = x2 - x1
+        h = y2 - y1
+        x = x1
+        y = y1
+
+        self.vertice = (int(x), int(y), int(w), int(h))
+        self.multi = int(x) * int(y)
 
     @property
     def x(self):
@@ -18,16 +39,20 @@ class Peca:
     def h(self):
         return self.vertice[3]
 
+    @property
+    def center(self) -> tuple[int, int]:
+        cx = self.x + self.w // 2
+        cy = self.y + self.h // 2
+        return cx, cy
+
     def __repr__(self) -> str:
-        return f'<{self.vertice}>'
+        return f"<{self.vertice}>"
 
-    def __eq__(self, __value: object) -> bool:
-        a = self.multi
-        b = __value.multi
-        return a == b
+    def __eq__(self, other) -> bool:
+        return self.multi == other.multi
 
-    def __gt__(self, __value) -> bool:
-        return self.multi > __value.multi
+    def __gt__(self, other) -> bool:
+        return self.multi > other.multi
 
-    def __lt__(self, __value) -> bool:
-        return self.multi < __value.multi
+    def __lt__(self, other) -> bool:
+        return self.multi < other.multi

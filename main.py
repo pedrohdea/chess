@@ -29,8 +29,9 @@ while True:
     ret, frame = cap.read()
     if frame is None:
         print('--(!) No captured frame -- Break!')
-        continue
-    cv.imshow('Capture - Face detection', frame)
+        raise ValueError('Troque a opção de entrada de vídeo')
+
+    cv.imshow('Capturando...', frame)
     key = cv.waitKey(1)
     if key == ord('q'):
         cv.destroyAllWindows()

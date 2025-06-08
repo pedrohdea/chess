@@ -1,37 +1,57 @@
-from ultralytics import YOLO
-from cv2.typing import MatLike
-from engine.model import Peca
 import logging
 import numpy as np
+import onnxruntime as ort
+from cv2.typing import MatLike
+from engine.model import Peca
+from engine.draw import letterbox
+from cv2 import UMat
+import time
 
 
-def get_vertice(box):
-    vertices = box.data.tolist()[0]
-    w = vertices[2] - vertices[0]
-    h = vertices[3] - vertices[1]
-    x = ((w) / 2) + vertices[0]
-    y = ((h) / 2) + vertices[1]
-    return int(x), int(y), int(w), int(h)
+# Cria a sessão ONNX com OpenVINO
+# === CONFIGURAÇÕES ===
+INPUT_SIZE = 640
+MODEL_PATH = "runs/detect/train2/weights/best.onnx"
+SESSION = ort.InferenceSession(
+    MODEL_PATH, providers=["OpenVINOExecutionProvider", "CPUExecutionProvider"]
+)
+
+input_name = SESSION.get_inputs()[0].name
+output_name = SESSION.get_outputs()[0].name
 
 
-# MODEL = YOLO('yolov8n.pt')  # ou 'path/to/seu_modelo.pt'
-onnx_model_path = "runs/detect/train2/weights/best.onnx"
-MODEL = YOLO(onnx_model_path)
+def get_predict(frame: UMat):
+    img, ratio, dwdh = letterbox(frame, (INPUT_SIZE, INPUT_SIZE))
+    img_input = img.astype(np.float32) / 255.0
+    img_input = np.transpose(img_input, (2, 0, 1))  # HWC → CHW
+    img_input = np.expand_dims(img_input, axis=0)  # BxCxHxW
 
-def get_predict(img: MatLike) -> list:
-    logging.info('predizendo imagem')
+    print(f"[DEBUG] Shape da entrada: {img_input.shape}")
 
-    results = MODEL.predict(source=img)  # save predictions as labels
-    logging.info(f'encontrado {len(results[0].boxes)}')
+    # === INFERÊNCIA ===
+    start = time.time()
+    output = SESSION.run([output_name], {input_name: img_input})[0]
+    end = time.time()
+
+    print(f"[DEBUG] Shape da saída: {output.shape}")
+    print(f"[INFO] Tempo de inferência: {end - start:.3f} s")
+    pred = output[0]  # (num_dets, 6)
+    return pred, ratio, dwdh
+
+
+def get_pecas(img: MatLike) -> list:
+    logging.info("predizendo imagem")
+
+    pred, ratio, (dw, dh) = get_predict(img)
+    logging.info(f"{pred.shape[0]} detecções brutas")
 
     pecas = []
-    for box in results[0].boxes:
-        vertice = get_vertice(box)
-        peca = Peca()
-        peca.vertice = vertice
-        peca.multi = vertice[0] * vertice[1]
-        pecas.append(peca)
+    for det in pred:
+        if det[4] < 0.5:
+            continue
+        pecas.append(Peca(det, dw, dh, ratio))
 
+    logging.info(f"encontrado {len(pecas)} peças confiáveis")
     return pecas
 
 
@@ -48,16 +68,17 @@ def get_matrix(pecas, slot):
 
 
 def get_command(modify_frame):
-    ALFABHETIC = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+    ALFABHETIC = ["a", "b", "c", "d", "e", "f", "g", "h"]
 
     old = np.where(modify_frame == 1)
     old = old[0][0], old[1][0]
-    old = f'{ALFABHETIC[old[1]]}{old[0]+1}'
+    old = f"{ALFABHETIC[old[1]]}{old[0]+1}"
     new = np.where(modify_frame == -1)
     new = new[0][0], new[1][0]
-    new = f'{ALFABHETIC[new[1]]}{new[0]+1}'
-    command = f'{old}{new}'
+    new = f"{ALFABHETIC[new[1]]}{new[0]+1}"
+    command = f"{old}{new}"
     return command
+
 
 def get_area(pecas):
     max_peca = max(pecas)

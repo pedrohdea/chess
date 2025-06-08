@@ -4,7 +4,7 @@ import cv2
 # === FUNÇÕES AUXILIARES ===
 
 
-def draw_squares(pred, img, ratio, dwdh):
+def draw_squares(img, pred, ratio, dwdh):
     for det in pred:
         *xyxy, conf, cls = det
         if conf < 0.1:
