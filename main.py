@@ -21,7 +21,7 @@ start_matrix = np.matrix(
 )
 last_frame = None
 
-cap = cv.VideoCapture(2)
+cap = cv.VideoCapture(0)
 while True:
     numero_de_jogadas = 0
     # liga todos os leds, apresentação
