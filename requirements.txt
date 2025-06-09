@@ -4,6 +4,7 @@ Pillow
 pytest
 iPython
 black
+loguru
 requests
 stockfish
 pytest-runner

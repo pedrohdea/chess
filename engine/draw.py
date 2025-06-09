@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+from loguru import logger
 
 # === FUNÇÕES AUXILIARES ===
 
@@ -9,7 +10,7 @@ def draw_squares(img, pred, ratio, dwdh):
         *xyxy, conf, cls = det
         if conf < 0.1:
             continue
-        print(det)
+        logger.debug(det)
 
         x1, y1, x2, y2 = map(
             int,

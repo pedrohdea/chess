@@ -3,6 +3,7 @@ import numpy as np
 import cv2
 import time
 from engine.draw import *
+from loguru import logger
 
 # === CONFIGURAÇÕES ===
 MODEL_PATH = "runs/detect/train2/weights/best.onnx"
@@ -28,7 +29,7 @@ start = time.time()
 output = session.run([output_name], {input_name: img_input})[0]
 end = time.time()
 
-print(f"Inferência em {end - start:.3f} segundos")
+logger.debug(f"Inferência em {end - start:.3f} segundos")
 
 # === PÓS-PROCESSAMENTO SIMPLES (só exibição dos boxes) ===
 # Supondo saída formato YOLOv8: (1, num_dets, 6) → [x1, y1, x2, y2, conf, cls]

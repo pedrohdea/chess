@@ -1,6 +1,7 @@
 from pi74HC595 import pi74HC595
 import RPi.GPIO as gpio
 import multiprocessing, time
+from loguru import logger
 
 
 def liga_tabuleiro(tabuleiro_1: list, tabuleiro_2: list):
@@ -11,10 +12,10 @@ def liga_tabuleiro(tabuleiro_1: list, tabuleiro_2: list):
         # Ajustar time para 0.015
         time.sleep(1)
         # shift_register.set_by_list(tabuleiro_1)
-        print(f'1: {tabuleiro_1}')
+        logger.debug(f'1: {tabuleiro_1}')
         time.sleep(1)
         # shift_register.set_by_list(tabuleiro_2)
-        print(f'2: {tabuleiro_2}')
+        logger.debug(f'2: {tabuleiro_2}')
 
     # shift_register.get_values()
     ##[0, 0, 0, 0, 0, 0, 0, 0]
@@ -58,12 +59,12 @@ proc = multiprocessing.Process(
     target=liga_tabuleiro, args=(tabuleiro_1, tabuleiro_2)
 )
 proc.start()
-print(proc)
+logger.debug(proc)
 # Terminate the process
 t = 20
 while t:
     t -=1
     time.sleep(0.5)
-    print('AAAAAAAAAAAAAAAAA')
+    logger.debug('AAAAAAAAAAAAAAAAA')
 
 proc.terminate()  # sends a SIGTERM

@@ -1,6 +1,7 @@
 import cv2
 import time
 from ultralytics import YOLO
+from loguru import logger
 
 # Carrega o modelo treinado
 model = YOLO("runs/detect/train2/weights/best.pt")
@@ -10,10 +11,10 @@ cap = cv2.VideoCapture(2)
 
 # Verifica se a câmera foi aberta corretamente
 if not cap.isOpened():
-    print("Erro ao abrir a webcam.")
+    logger.debug("Erro ao abrir a webcam.")
     exit()
 
-print("Pressione 'q' na janela de vídeo ou CTRL+C no terminal para sair.")
+logger.debug("Pressione 'q' na janela de vídeo ou CTRL+C no terminal para sair.")
 
 try:
     while True:
@@ -23,7 +24,7 @@ try:
         # Captura um frame
         ret, frame = cap.read()
         if not ret:
-            print("Erro ao capturar frame.")
+            logger.debug("Erro ao capturar frame.")
             break
 
         start = time.time()
@@ -32,14 +33,14 @@ try:
         results = model(frame)
 
         end = time.time()
-        print(f"Inferência concluída em {end - start:.3f} segundos")
+        logger.debug(f"Inferência concluída em {end - start:.3f} segundos")
 
         # Desenha e exibe
         annotated = results[0].plot()
         cv2.imshow("Detecção YOLOv8", annotated)
 
         # Aguarda o usuário ver a imagem
-        print("Visualizando resultado. Feche a janela ou pressione qualquer tecla nela.")
+        logger.debug("Visualizando resultado. Feche a janela ou pressione qualquer tecla nela.")
         cv2.waitKey(0)  # trava até interação com a janela
 
         # Fecha a janela após visualização
@@ -49,7 +50,7 @@ try:
         time.sleep(0.5)
 
 except KeyboardInterrupt:
-    print("\nExecução encerrada pelo usuário.")
+    logger.debug("\nExecução encerrada pelo usuário.")
 
 finally:
     cap.release()

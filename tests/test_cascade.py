@@ -4,6 +4,7 @@ import os
 from time import time
 from windowcapture import WindowCapture
 from vision import Vision
+from loguru import logger
 
 # Change the working directory to the folder this script is in.
 # Doing this because I'll be putting the files from each video in their own folder on GitHub
@@ -34,7 +35,7 @@ while(True):
     cv.imshow('Matches', detection_image)
 
     # debug the loop rate
-    print('FPS {}'.format(1 / (time() - loop_time)))
+    logger.debug('FPS {}'.format(1 / (time() - loop_time)))
     loop_time = time()
 
     # press 'q' with the output window focused to exit.
@@ -50,4 +51,4 @@ while(True):
     elif key == ord('d'):
         cv.imwrite('negative/{}.jpg'.format(loop_time), screenshot)
 
-print('Done.')
+logger.debug('Done.')

@@ -3,26 +3,27 @@ import time
 import os
 from engine.draw import draw_squares
 from engine.predict import get_predict
+from loguru import logger
 
 # === EXIBIÇÃO ===
 os.environ["QT_QPA_PLATFORM"] = "xcb"  # evita conflitos no Linux
 
 # === INICIALIZA WEBCAM ===
-print("[INFO] Iniciando webcam...")
+logger.debug("[INFO] Iniciando webcam...")
 cap = cv2.VideoCapture(0)
 time.sleep(2)
 
 if not cap.isOpened():
     raise RuntimeError("Erro ao abrir a webcam.")
 
-print("Pressione 'q' para sair.\n")
+logger.debug("Pressione 'q' para sair.\n")
 
 try:
     while True:
         time.sleep(1)
         ret, frame = cap.read()
         if not ret:
-            print("[ERRO] Frame não capturado.")
+            logger.debug("[ERRO] Frame não capturado.")
             break
 
         pred, ratio, dwdh = get_predict(frame)
@@ -39,4 +40,4 @@ try:
 finally:
     cap.release()
     cv2.destroyAllWindows()
-    print("\n[INFO] Encerrado com sucesso.")
+    logger.debug("\n[INFO] Encerrado com sucesso.")

@@ -1,6 +1,7 @@
 import time
 import numpy as np
 import onnxruntime as ort
+from loguru import logger
 
 # === CONFIGURAÇÕES ===
 MODEL_PATH = "runs/detect/train2/weights/best.onnx"
@@ -23,12 +24,12 @@ def measure_inference(session):
 # Teste com CPU
 session_cpu = ort.InferenceSession(MODEL_PATH, providers=["CPUExecutionProvider"])
 cpu_time = measure_inference(session_cpu)
-print(f"⏱️ CPUExecutionProvider: {cpu_time:.4f} segundos")
+logger.debug(f"⏱️ CPUExecutionProvider: {cpu_time:.4f} segundos")
 
 # Teste com OpenVINO
 session_vino = ort.InferenceSession(MODEL_PATH, providers=["OpenVINOExecutionProvider"])
 vino_time = measure_inference(session_vino)
-print(f"⚡ OpenVINOExecutionProvider: {vino_time:.4f} segundos")
+logger.debug(f"⚡ OpenVINOExecutionProvider: {vino_time:.4f} segundos")
 
 # Teste com CUDAExecutionProvider
 # pip install onnxruntime-gpu

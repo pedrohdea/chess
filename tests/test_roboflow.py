@@ -1,6 +1,7 @@
 from roboflow import Roboflow
 import cv2 as cv
 from PIL import Image
+from loguru import logger
 
 
 rf = Roboflow(api_key="Yc9P3iOmEuSts3mFZLd3")
@@ -12,7 +13,7 @@ def get_positions(file_path) -> list:
     # infer on a local image
     prediction = MODEL.predict(file_path, confidence=40, overlap=30).json()
     for pred in prediction['predictions']:
-        print(pred)
+        logger.debug(pred)
         yield pred['x'], pred['y'], pred['width'], pred['height']
 
 
@@ -22,7 +23,7 @@ def detectAndDisplay(frame):
     # -- Detect faces
     pecas = get_positions("tmp_image.jpg")
     for x, y, w, h in pecas:
-        print('peça: ', x, y)
+        logger.debug('peça: ', x, y)
         center = (int(x+ (w / 2)), int(y + (h / 2)))
         from IPython import embed;embed(header='C')
         cv.circle(frame, center, 30, (255, 0, 0), 4)
@@ -34,12 +35,12 @@ camera_device = 0
 cap = cv.VideoCapture(camera_device)
 
 if not cap.isOpened:
-    print('--(!)Error opening video capture')
+    logger.debug('--(!)Error opening video capture')
     exit(0)
 
 while True:
     ret, frame = cap.read()
     if frame is None:
-        print('--(!) No captured frame -- Break!')
+        logger.debug('--(!) No captured frame -- Break!')
         continue
     detectAndDisplay(frame)

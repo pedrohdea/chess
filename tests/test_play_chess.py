@@ -1,6 +1,7 @@
 from ultralytics import YOLO
 import cv2
 import numpy as np
+from loguru import logger
 
 model = YOLO("data/model_.onnx")
 
@@ -12,7 +13,7 @@ assert len(results[0].boxes) == 32
 img = cv2.imread("tests/fixtures/pos2.jpg")
 results = model.predict(source=img)  # save predictions as labels
 
-print(results)
+logger.debug(results)
 assert len(results[0].boxes) == 32
 
 
@@ -101,7 +102,7 @@ cv2.imwrite("Cropped Image.jpg", crop_img)
 
 results = model.predict(source=img)  # save predictions as labels
 
-print(results)
+logger.debug(results)
 assert len(results[0].boxes) == 32
 
 pecas = []
@@ -172,4 +173,4 @@ from stockfish import Stockfish
 stockfish = Stockfish(path='stockfish/stockfish-ubuntu-x86-64')
 
 stockfish.make_moves_from_current_position([command])  # bot
-print(stockfish.get_board_visual())
+logger.debug(stockfish.get_board_visual())

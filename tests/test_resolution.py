@@ -1,4 +1,5 @@
 import cv2
+from loguru import logger
 
 
 def testar_resolucoes(device=0):
@@ -19,10 +20,10 @@ def testar_resolucoes(device=0):
     cap = cv2.VideoCapture(device, cv2.CAP_V4L2)  # use CAP_V4L2 no Linux
 
     if not cap.isOpened():
-        print("Erro ao abrir a câmera.")
+        logger.debug("Erro ao abrir a câmera.")
         return
 
-    print("Testando resoluções...\n")
+    logger.debug("Testando resoluções...\n")
     for largura, altura in resolucoes:
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, largura)
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, altura)
@@ -30,7 +31,7 @@ def testar_resolucoes(device=0):
         real_altura = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
         suportada = int(real_largura) == largura and int(real_altura) == altura
         status = "✓ Suportada" if suportada else "✗ Ignorada"
-        print(
+        logger.debug(
             f"{largura}x{altura} -> Real: {int(real_largura)}x{int(real_altura)}   {status}"
         )
 

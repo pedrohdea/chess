@@ -6,6 +6,7 @@ from engine.model import Peca
 from engine.draw import letterbox
 from cv2 import UMat
 import time
+from loguru import logger
 
 
 # Cria a sessão ONNX com OpenVINO
@@ -27,15 +28,15 @@ def get_predict(frame: UMat):
     img_input = np.transpose(img_input, (2, 0, 1))  # HWC → CHW
     img_input = np.expand_dims(img_input, axis=0)  # BxCxHxW
 
-    print(f"[DEBUG] Shape da entrada: {img_input.shape}")
+    logger.debug(f"[DEBUG] Shape da entrada: {img_input.shape}")
 
     # === INFERÊNCIA ===
     start = time.time()
     output = SESSION.run([output_name], {input_name: img_input})[0]
     end = time.time()
 
-    print(f"[DEBUG] Shape da saída: {output.shape}")
-    print(f"[INFO] Tempo de inferência: {end - start:.3f} s")
+    logger.debug(f"[DEBUG] Shape da saída: {output.shape}")
+    logger.debug(f"[INFO] Tempo de inferência: {end - start:.3f} s")
     pred = output[0]  # (num_dets, 6)
     return pred, ratio, dwdh
 
@@ -58,7 +59,7 @@ def get_threshold(trust_list: list, qt_min: int) -> float:
     trust_list.reverse()
     threshold = min(trust_list[:qt_min])
 
-    print(f"threshold {threshold}")
+    logger.debug(f"threshold {threshold}")
     if threshold<CONFIDENCE:
         threshold = CONFIDENCE
 
@@ -141,7 +142,7 @@ def get_matrix(pecas, mapa):
 
         if 0 <= row < 8 and 0 <= col < 8:
             if matrix[row, col] == 1:
-                print(f"[COLISÃO] Outra peça já estava em ({row}, {col})")
+                logger.debug(f"[COLISÃO] Outra peça já estava em ({row}, {col})")
             matrix[row, col] = 1
 
     qtd_pecas = np.count_nonzero(matrix)
@@ -150,9 +151,10 @@ def get_matrix(pecas, mapa):
 
     return None
 
+ALFABHETIC = ["a", "b", "c", "d", "e", "f", "g", "h"]
+ALFABHETIC.reverse()
 
 def get_command(modify_frame):
-    ALFABHETIC = ["a", "b", "c", "d", "e", "f", "g", "h"]
 
     old = np.where(modify_frame == 1)
     old = old[0][0], old[1][0]
