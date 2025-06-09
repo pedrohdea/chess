@@ -21,7 +21,8 @@ class Peca:
         y = y1
 
         self.vertice = (int(x), int(y), int(w), int(h))
-        self.multi = int(x) * int(y)
+        self.area = int(w) * int(h)
+        self.multi = x * y
 
     @property
     def x(self):

@@ -11,6 +11,7 @@ import time
 # Cria a sessão ONNX com OpenVINO
 # === CONFIGURAÇÕES ===
 INPUT_SIZE = 640
+CONFIDENCE = 0.2
 MODEL_PATH = "runs/detect/train2/weights/best.onnx"
 SESSION = ort.InferenceSession(
     MODEL_PATH, providers=["OpenVINOExecutionProvider", "CPUExecutionProvider"]
@@ -39,32 +40,115 @@ def get_predict(frame: UMat):
     return pred, ratio, dwdh
 
 
-def get_pecas(img: MatLike) -> list:
+def get_threshold(trust_list: list, qt_min: int) -> float:
+    """
+    Encontra o menor threshold necessário para obter pelo menos `min` detecções.
+
+    Args:
+        pred (np.ndarray): Detecções no formato [x1, y1, x2, y2, conf, cls]
+        min (int): Número mínimo de detecções desejado
+        max_thresh (float): Threshold inicial (começa do mais alto)
+        min_thresh (float): Threshold mínimo permitido
+        step (float): Decremento a cada iteração
+
+    Returns:
+        float: Threshold final encontrado
+    """
+    trust_list.sort()
+    trust_list.reverse()
+    threshold = min(trust_list[:qt_min])
+
+    print(f"threshold {threshold}")
+    if threshold<CONFIDENCE:
+        threshold = CONFIDENCE
+
+    return threshold
+
+
+def get_pecas(img: MatLike, qt_min: int) -> list:
     logging.info("predizendo imagem")
 
     pred, ratio, (dw, dh) = get_predict(img)
     logging.info(f"{pred.shape[0]} detecções brutas")
 
-    pecas = []
-    for det in pred:
-        if det[4] < 0.5:
-            continue
-        pecas.append(Peca(det, dw, dh, ratio))
+    trust = [det[4] for det in pred]
+    threshold = get_threshold(trust, qt_min)
+    pecas = [Peca(det, dw, dh, ratio) for det in pred if det[4] >= threshold]
 
     logging.info(f"encontrado {len(pecas)} peças confiáveis")
     return pecas
 
 
-def get_matrix(pecas, slot):
-    zeros_matrix = np.zeros((8, 8), dtype=int)
-    frame_matrix = zeros_matrix.copy()
+def agrupar_valores_por_distribuicao(valores, grupos=8):
+    valores_ordenados = sorted(valores)
+    n = len(valores_ordenados)
+    if n < grupos:
+        raise ValueError("Número de valores insuficiente para agrupar.")
 
-    for peca in pecas:
-        m_x = int(peca.x / slot[0])
-        m_y = int(peca.y / slot[1])
-        frame_matrix[m_x, m_y] = 1
+    diferencas = [valores_ordenados[i + 1] - valores_ordenados[i] for i in range(n - 1)]
+    indices_corte = sorted(
+        range(len(diferencas)), key=lambda i: diferencas[i], reverse=True
+    )[: grupos - 1]
+    indices_corte = sorted([i + 1 for i in indices_corte])
+    limites = [0] + indices_corte + [n]
 
-    return frame_matrix
+    grupos_resultado = []
+    for i in range(len(limites) - 1):
+        grupo = valores_ordenados[limites[i] : limites[i + 1]]
+        media = int(sum(grupo) / len(grupo))
+        grupos_resultado.append(media)
+
+    return sorted(grupos_resultado)
+
+
+def get_mapa(pecas):
+    if not pecas:
+        return np.zeros((8, 8), dtype=int)
+
+    # Extrai centróides das peças
+    centroides = [p.center for p in pecas]
+    xs = [c[0] for c in centroides]
+    ys = [c[1] for c in centroides]
+
+    # Agrupa colunas com base na distribuição adaptativa (eixo X)
+    colunas = agrupar_valores_por_distribuicao(xs, grupos=8)
+
+    # Define linhas com espaçamento fixo com base na altura total (eixo Y)
+    y_min = min(ys)
+    y_max = max(ys)
+    altura = y_max - y_min
+    slot_h = altura / 7  # 7 intervalos → 8 casas
+
+    linhas = [int(y_min + i * slot_h) for i in range(8)]
+
+    # Calcula divisores entre casas
+    meios_x = [(colunas[i] + colunas[i + 1]) // 2 for i in range(len(colunas) - 1)]
+    meios_y = [(linhas[i] + linhas[i + 1]) // 2 for i in range(len(linhas) - 1)]
+    return meios_x, meios_y
+
+
+def get_matrix(pecas, mapa):
+    meios_x, meios_y = mapa
+    # Inicializa a matriz
+    matrix = np.zeros((8, 8), dtype=int)
+
+    # Preenche a matriz com base na posição de cada peça
+    for p in pecas:
+        cx, cy = p.center
+
+        col = next((i for i, x in enumerate(meios_x) if cx < x), len(meios_x))
+        row = next((i for i, y in enumerate(meios_y) if cy < y), len(meios_y))
+
+        if 0 <= row < 8 and 0 <= col < 8:
+            if matrix[row, col] == 1:
+                print(f"[COLISÃO] Outra peça já estava em ({row}, {col})")
+            matrix[row, col] = 1
+
+    qtd_pecas = np.count_nonzero(matrix)
+    if qtd_pecas == len(pecas):
+        return matrix
+
+    return None
 
 
 def get_command(modify_frame):
@@ -78,15 +162,3 @@ def get_command(modify_frame):
     new = f"{ALFABHETIC[new[1]]}{new[0]+1}"
     command = f"{old}{new}"
     return command
-
-
-def get_area(pecas):
-    max_peca = max(pecas)
-    min_peca = min(pecas)
-
-    x = min_peca.x - int(min_peca.w / 2)
-    w = max_peca.x - min_peca.x + max_peca.w
-    y = min_peca.y - int(min_peca.h / 2)
-    h = max_peca.y - min_peca.y + min_peca.h
-    area_utilizavel = (x, y, w, h)
-    return area_utilizavel
