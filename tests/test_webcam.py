@@ -1,18 +1,12 @@
-from __future__ import print_function
+"""Teste de webcam, usado para coletar imagem da webcam"""
+
+import os
 import cv2 as cv
 from time import time
 
 from loguru import logger
 
-cat_cascade_name = 'cascade/cascade.xml'
-cat_cascade = cv.CascadeClassifier()
-# -- 1. Load the cascades
-if not cat_cascade.load(cv.samples.findFile(cat_cascade_name)):
-    logger.debug('--(!)Error loading face cascade')
-    exit(0)
-
-
-cap = cv.VideoCapture(0)
+cap = cv.VideoCapture(2)
 
 if not cap.isOpened:
     logger.debug('--(!)Error opening video capture')
@@ -31,8 +25,10 @@ while True:
         cv.destroyAllWindows()
         break
     elif key == ord('p'):
+        os.makedirs('positivas', exist_ok=True)
         cv.imwrite('positivas/{}.jpg'.format(loop_time), frame)
         logger.debug('imagem positiva salva')
     elif key == ord('n'):
+        os.makedirs('negativas', exist_ok=True)
         cv.imwrite('negativas/{}.jpg'.format(loop_time), frame)
         logger.debug('imagem negativa salva')
