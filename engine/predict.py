@@ -7,12 +7,14 @@ from engine.draw import letterbox
 from cv2 import UMat
 import time
 from loguru import logger
-
+import cv2
+from engine.draw import draw_squares
 
 # Cria a sessão ONNX com OpenVINO
 # === CONFIGURAÇÕES ===
+DEBUG = True
 INPUT_SIZE = 640
-CONFIDENCE = 0.2
+CONFIDENCE = 0.3
 MODEL_PATH = "runs/detect/train2/weights/best.onnx"
 SESSION = ort.InferenceSession(
     MODEL_PATH, providers=["OpenVINOExecutionProvider", "CPUExecutionProvider"]
@@ -35,9 +37,14 @@ def get_predict(frame: UMat):
     output = SESSION.run([output_name], {input_name: img_input})[0]
     end = time.time()
 
-    logger.debug(f"[DEBUG] Shape da saída: {output.shape}")
-    logger.debug(f"[INFO] Tempo de inferência: {end - start:.3f} s")
+    logger.debug(f"Shape da saída: {output.shape}")
+    logger.debug(f"Tempo de inferência: {end - start:.3f} s")
     pred = output[0]  # (num_dets, 6)
+
+    if DEBUG:
+        frame = draw_squares(frame, pred, ratio, dwdh)
+        cv2.imshow("DEBUG squares", frame)
+        
     return pred, ratio, dwdh
 
 
@@ -154,7 +161,7 @@ def get_matrix(pecas, mapa):
 ALFABHETIC = ["a", "b", "c", "d", "e", "f", "g", "h"]
 ALFABHETIC.reverse()
 
-def get_command(modify_frame):
+def get_command(modify_frame) -> str:
 
     old = np.where(modify_frame == 1)
     old = old[0][0], old[1][0]

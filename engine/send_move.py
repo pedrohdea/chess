@@ -1,14 +1,14 @@
-# Echo client program
-import socket
 from loguru import logger
-
-HOST = 'localhost'  # The remote host
-PORT = 50007  # The same port as used by the server
+from time import sleep
 
 
-def send_move(move: str):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((HOST, PORT))
-        s.sendall(move.encode())
-        data = s.recv(1024)
-    logger.debug('Received', repr(data))
+def send_move(arduino, move: str):
+    move = move.upper().strip()
+    logger.debug(f"enviando comando {move}.")
+    try:
+        arduino.write(f"{move}\n".encode())
+    except:
+        logger.warning(f"comando {move} não enviado")
+        arduino.close()
+        sleep(1)
+        arduino.open()

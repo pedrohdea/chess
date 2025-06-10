@@ -1,5 +1,5 @@
 import sys
-from engine.predict import get_predict, get_matrix, get_command
+from engine.predict import get_matrix, get_command
 from engine.send_move import send_move
 from engine.predict import get_pecas, get_matrix, get_mapa
 import cv2 as cv
@@ -7,6 +7,7 @@ from time import time, sleep
 import numpy as np
 from stockfish import Stockfish
 from loguru import logger
+import serial
 
 LOG_LEVEL = "INFO"
 
@@ -29,6 +30,9 @@ logger.add(
 )
 
 # SETUP
+ENDERECO_USB = "/dev/ttyACM0"
+ARDUINO = serial.Serial(port=ENDERECO_USB, baudrate=9600, timeout=1)
+
 MAPA = None
 STOCKFISH = Stockfish(path="stockfish/stockfish-ubuntu-x86-64")
 start_matrix = np.array(
@@ -46,12 +50,16 @@ start_matrix = np.array(
 last_frame = None
 numero_de_jogadas = 0
 pecas_restantes = 32
-cap = cv.VideoCapture(0)
+cap = cv.VideoCapture(2)
 # liga todos os leds, apresentação
 
 while not numero_de_jogadas:
     sleep(1)
     ret, frame = cap.read()
+    cv.imshow("Tabuleiro de Xadrez", frame)
+    if cv.waitKey(30) & 0xFF == ord("q"):
+        raise KeyboardInterrupt()
+
     pecas = get_pecas(frame, 32)
     if len(pecas) < 32:
         logger.info("Procurando 32 peças pra inicialização...")
@@ -66,6 +74,7 @@ while not numero_de_jogadas:
         else:
             MAPA = None
             logger.info("Esperando organizar 32 peças...")
+
 
 # LOOP
 try:
@@ -92,22 +101,29 @@ try:
 
         if count_pos == 1 and count_neg == 1:
             command = get_command(modify_frame)
+            trust_command = command
+            if command != trust_command:
+                sleep(1)
+                continue
 
             try:
-                STOCKFISH.make_moves_from_current_position([command])  # bot
+                STOCKFISH.make_moves_from_current_position([command])  # Player ou Bot
             except ValueError as stck_exc:
                 logger.warning(f"STOCKFISH: {stck_exc}")
+                sleep(1)
                 continue
 
             logger.success(STOCKFISH.get_board_visual())
+            logger.success(f'comando reconhecido {command}')
+            # send_move(ARDUINO, command)
+            sleep(1)
             numero_de_jogadas += 1
             last_frame = frame_matrix
             move = STOCKFISH.get_best_move()
-            # send_move(move)
+            send_move(ARDUINO, move)
             logger.info(f"Realizando jogada {move}")
         else:
             logger.debug("Nenhum movimento detectado...")
-            # logger.info(STOCKFISH.get_board_visual())
 
 finally:
     cap.release()

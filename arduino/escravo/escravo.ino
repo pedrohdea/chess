@@ -54,7 +54,7 @@ void gerarMapaUnitario(const char *comando, uint8_t leds[2]) {
   if (lin >= '1' && lin <= '8')
     linha = (1 << (lin - '1'));
     linha = inverterBits(linha);
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
   coluna = ~coluna & 0xFF;  // inversão da coluna
 
   leds[0] = linha;   // LSB
