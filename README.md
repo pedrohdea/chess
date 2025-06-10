@@ -66,7 +66,17 @@ base64 negativas/1701128875.2898896.jpg | curl -d @- "https://detect.roboflow.co
 ```
 yolo detect train data=dataset/data.yaml model=yolov8n.pt epochs=100 imgsz=640,360 augment=True
 ```
+### Continuar treinamento
+Após anotar as imagens no ROBOFLOW, basta mesclar os diretórios com 
+```
+rsync -av --ignore-existing datasetV5/ dataset/
+```
+E depois re-treinar o YOLO8
+```
+yolo detect train model=yolov8n.pt data=dataset/data.yaml epochs=100 imgsz=640,360 augment=True
+```
 ---
+
 
 ## Uso com Docker
 
