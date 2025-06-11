@@ -4,7 +4,7 @@ from ultralytics import YOLO
 from loguru import logger
 
 # Carrega o modelo treinado
-model = YOLO("runs/detect/train2/weights/best.pt")
+model = YOLO("runs/detect/train3/weights/best.pt")
 
 # Inicializa a webcam (0 = webcam padrão)
 cap = cv2.VideoCapture(2)

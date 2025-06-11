@@ -6,7 +6,7 @@ from engine.draw import *
 from loguru import logger
 
 # === CONFIGURAÇÕES ===
-MODEL_PATH = "runs/detect/train2/weights/best.onnx"
+MODEL_PATH = "runs/detect/train3/weights/best.onnx"
 IMAGE_PATH = "positivas/1749319728.0928051.jpg"
 INPUT_SIZE = 640  # tamanho esperado pela rede (ex: 640x640)
 

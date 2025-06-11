@@ -101,3 +101,9 @@ cd app/
 
 Pedro Henrique de Assumpção  
 Engenharia de Controle e Automação – IFRS Campus Farroupilha
+
+# TCC
+
+- Fazer checkpoint para relatar nos resultados
+- Falar nos resultados sobre os testes de código
+- Dizer nas conclusões sobre github e versionamento de testes e código e yolo

@@ -15,7 +15,7 @@ from engine.draw import draw_squares
 DEBUG = True
 INPUT_SIZE = 640
 CONFIDENCE = 0.3
-MODEL_PATH = "runs/detect/train2/weights/best.onnx"
+MODEL_PATH = "runs/detect/train3/weights/best.onnx"
 SESSION = ort.InferenceSession(
     MODEL_PATH, providers=["OpenVINOExecutionProvider", "CPUExecutionProvider"]
 )

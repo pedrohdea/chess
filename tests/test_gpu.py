@@ -4,7 +4,7 @@ import onnxruntime as ort
 from loguru import logger
 
 # === CONFIGURAÇÕES ===
-MODEL_PATH = "runs/detect/train2/weights/best.onnx"
+MODEL_PATH = "runs/detect/train3/weights/best.onnx"
 
 # Dummy input para exemplo — substitua pelo real!
 def get_sample_input(session):

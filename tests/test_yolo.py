@@ -4,14 +4,14 @@ import time                   # Para medir o tempo de execução
 from loguru import logger
 
 # Carrega o modelo YOLO treinado (substitua pelo caminho correto do seu modelo)
-model = YOLO("runs/detect/train2/weights/best.pt")
-
+# runs/detect/train3/weights/best.pt
+model = YOLO("runs/detect/train3/weights/best.pt")
 # Marca o tempo de início da inferência
 start = time.time()
 logger.debug('Início:', time.strftime('%H:%M:%S', time.localtime(start)))
 
 # Carrega a imagem de teste
-img = cv2.imread('positivas/1749319728.0928051.jpg')
+img = cv2.imread('positivas/1749518415.0387948.jpg')
 
 # Realiza a inferência na imagem
 results = model(img)

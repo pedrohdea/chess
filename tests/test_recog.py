@@ -10,7 +10,7 @@ os.environ["QT_QPA_PLATFORM"] = "xcb"  # evita conflitos no Linux
 
 # === INICIALIZA WEBCAM ===
 logger.debug("[INFO] Iniciando webcam...")
-cap = cv2.VideoCapture(2)
+cap = cv2.VideoCapture(0)
 time.sleep(2)
 
 if not cap.isOpened():
