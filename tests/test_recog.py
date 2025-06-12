@@ -1,16 +1,16 @@
 import cv2
 import time
 import os
-from engine.draw import draw_squares
-from engine.predict import get_predict
 from loguru import logger
+from engine.detect import get_yolo_detect
+
 
 # === EXIBIÇÃO ===
 os.environ["QT_QPA_PLATFORM"] = "xcb"  # evita conflitos no Linux
 
 # === INICIALIZA WEBCAM ===
 logger.debug("[INFO] Iniciando webcam...")
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(2)
 time.sleep(2)
 
 if not cap.isOpened():
@@ -26,13 +26,10 @@ try:
             logger.debug("[ERRO] Frame não capturado.")
             break
 
-        pred, ratio, dwdh = get_predict(frame)
-
-        # === PÓS-PROCESSAMENTO ===
-        frame = draw_squares(frame, pred, ratio, dwdh)
+        detections, annotated_display_frame = get_yolo_detect(frame)
 
         # === EXIBIÇÃO ===
-        cv2.imshow("YOLO ONNX Webcam", frame)
+        cv2.imshow("YOLO ONNX Webcam", annotated_display_frame)
 
         if cv2.waitKey(30) & 0xFF == ord('q'):
             break

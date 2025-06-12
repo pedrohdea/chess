@@ -1,13 +1,15 @@
 import sys
-from engine.predict import get_matrix, get_command
-from engine.send_move import send_move
-from engine.predict import get_pecas, get_matrix, get_mapa
+from time import sleep, time
+
 import cv2 as cv
-from time import time, sleep
 import numpy as np
-from stockfish import Stockfish
-from loguru import logger
 import serial
+from loguru import logger
+
+from engine.detect import get_yolo_detect
+from engine.predict import get_command, get_mapa, get_matrix, get_pecas
+from engine.send_move import send_move
+from stockfish import Stockfish
 
 LOG_LEVEL = "INFO"
 
@@ -60,7 +62,9 @@ while not numero_de_jogadas:
     if cv.waitKey(30) & 0xFF == ord("q"):
         raise KeyboardInterrupt()
 
-    pecas = get_pecas(frame, 32)
+    pred_raw, frame = get_yolo_detect(frame)
+    pecas = get_pecas(pred_raw, 32)
+
     if len(pecas) < 32:
         logger.info("Procurando 32 peças pra inicialização...")
         continue
@@ -86,11 +90,13 @@ try:
             logger.info("--(!) No captured frame -- Break!")
             raise ValueError("Troque a opção de entrada de vídeo")
 
+        pred_raw, frame = get_yolo_detect(frame)
+        pecas = get_pecas(pred_raw, pecas_restantes)
+
         cv.imshow("Tabuleiro de Xadrez", frame)
         if cv.waitKey(30) & 0xFF == ord("q"):
             raise KeyboardInterrupt()
 
-        pecas = get_pecas(frame, pecas_restantes)
         frame_matrix = get_matrix(pecas, MAPA)
         if frame_matrix is None:
             logger.warning("Frame perdido")
@@ -114,7 +120,7 @@ try:
                 continue
 
             logger.success(STOCKFISH.get_board_visual())
-            logger.success(f'comando reconhecido {command}')
+            logger.success(f"comando reconhecido {command}")
             # send_move(ARDUINO, command)
             sleep(1)
             numero_de_jogadas += 1

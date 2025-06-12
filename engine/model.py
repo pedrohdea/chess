@@ -1,3 +1,5 @@
+import numpy as np
+
 def get_vertices(box):
     x1, y1, x2, y2 = box
     w = x2 - x1
@@ -8,12 +10,9 @@ def get_vertices(box):
 
 
 class Peca:
-    def __init__(self, det, dw: float, dh: float, ratio: float):
+    def __init__(self, det: np.ndarray):
         # Corrige as coordenadas da predição ONNX para o espaço original da imagem
-        x1 = (det[0] - dw) / ratio
-        y1 = (det[1] - dh) / ratio
-        x2 = (det[2] - dw) / ratio
-        y2 = (det[3] - dh) / ratio
+        x1, y1, x2, y2 = det[0:4]
 
         w = x2 - x1
         h = y2 - y1
@@ -23,6 +22,8 @@ class Peca:
         self.vertice = (int(x), int(y), int(w), int(h))
         self.area = int(w) * int(h)
         self.multi = x * y
+        self.confidence = det[4]
+        self.class_id = int(det[5])
 
     @property
     def x(self):

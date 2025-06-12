@@ -27,8 +27,8 @@ output_name = SESSION.get_outputs()[0].name
 def get_predict(frame: UMat):
     img, ratio, dwdh = letterbox(frame, (INPUT_SIZE, INPUT_SIZE))
     img_input = img.astype(np.float32) / 255.0
-    img_input = np.transpose(img_input, (2, 0, 1))  # HWC → CHW
-    img_input = np.expand_dims(img_input, axis=0)  # BxCxHxW
+    img_input = np.transpose(img_input, (2, 0, 1))
+    img_input = np.expand_dims(img_input, axis=0)
 
     logger.debug(f"[DEBUG] Shape da entrada: {img_input.shape}")
 
@@ -73,19 +73,21 @@ def get_threshold(trust_list: list, qt_min: int) -> float:
     return threshold
 
 
-def get_pecas(img: MatLike, qt_min: int) -> list:
-    logging.info("predizendo imagem")
+def get_pecas(pred, qt_min: int) -> list:
+    logger.info("Iniciando predição da imagem para encontrar peças...")
 
-    pred, ratio, (dw, dh) = get_predict(img)
-    logging.info(f"{pred.shape[0]} detecções brutas")
+    if pred is None or len(pred) == 0:
+        logger.info("Nenhuma detecção bruta encontrada.")
+        return []
+
+    logger.info(f"{pred.shape[0]} detecções brutas encontradas.")
 
     trust = [det[4] for det in pred]
     threshold = get_threshold(trust, qt_min)
-    pecas = [Peca(det, dw, dh, ratio) for det in pred if det[4] >= threshold]
+    pecas = [Peca(det) for det in pred if det[4] >= threshold]
 
-    logging.info(f"encontrado {len(pecas)} peças confiáveis")
+    logger.info(f"Encontrado {len(pecas)} peças confiáveis após o threshold.")
     return pecas
-
 
 def agrupar_valores_por_distribuicao(valores, grupos=8):
     valores_ordenados = sorted(valores)
