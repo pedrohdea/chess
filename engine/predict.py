@@ -74,19 +74,19 @@ def get_threshold(trust_list: list, qt_min: int) -> float:
 
 
 def get_pecas(pred, qt_min: int) -> list:
-    logger.info("Iniciando predição da imagem para encontrar peças...")
+    logger.debug("Iniciando predição da imagem para encontrar peças...")
 
     if pred is None or len(pred) == 0:
-        logger.info("Nenhuma detecção bruta encontrada.")
+        logger.debug("Nenhuma detecção bruta encontrada.")
         return []
 
-    logger.info(f"{pred.shape[0]} detecções brutas encontradas.")
+    logger.debug(f"{pred.shape[0]} detecções brutas encontradas.")
 
     trust = [det[4] for det in pred]
     threshold = get_threshold(trust, qt_min)
     pecas = [Peca(det) for det in pred if det[4] >= threshold]
 
-    logger.info(f"Encontrado {len(pecas)} peças confiáveis após o threshold.")
+    logger.debug(f"Encontrado {len(pecas)} peças confiáveis após o threshold.")
     return pecas
 
 def agrupar_valores_por_distribuicao(valores, grupos=8):
@@ -158,6 +158,7 @@ def get_matrix(pecas, mapa):
     if qtd_pecas == len(pecas):
         return matrix
 
+    logger.warning("Matrix descartada, frame obstruído")
     return None
 
 ALFABHETIC = ["a", "b", "c", "d", "e", "f", "g", "h"]

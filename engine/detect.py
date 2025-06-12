@@ -36,7 +36,7 @@ def get_yolo_detect(frame: cv2.UMat):
 
     # --- Inferência ---
     start_time = time.time()
-    results = MODEL(annotated_frame)
+    results = MODEL(annotated_frame, verbose=False)
     end_time = time.time()
 
     logger.debug(f"Tempo total de inferência YOLO: {end_time - start_time:.3f} s")

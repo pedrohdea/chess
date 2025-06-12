@@ -99,7 +99,6 @@ try:
 
         frame_matrix = get_matrix(pecas, MAPA)
         if frame_matrix is None:
-            logger.warning("Frame perdido")
             continue
         modify_frame = last_frame - frame_matrix
         count_pos = np.count_nonzero(modify_frame == 1)
@@ -109,6 +108,7 @@ try:
             command = get_command(modify_frame)
             trust_command = command
             if command != trust_command:
+                # Valida se o comando ainda é o mesmo encontrado 1 segundo atrás
                 sleep(1)
                 continue
 
@@ -120,14 +120,13 @@ try:
                 continue
 
             logger.success(STOCKFISH.get_board_visual())
-            logger.success(f"comando reconhecido {command}")
+            logger.success(f"Jogada reconhecida {command.upper()}")
             # send_move(ARDUINO, command)
             sleep(1)
             numero_de_jogadas += 1
             last_frame = frame_matrix
             move = STOCKFISH.get_best_move()
             send_move(ARDUINO, move)
-            logger.info(f"Realizando jogada {move}")
         else:
             logger.debug("Nenhum movimento detectado...")
 

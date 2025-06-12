@@ -5,7 +5,7 @@ import numpy as np
 import onnxruntime as ort
 from loguru import logger
 
-from engine.draw import draw_squares
+from engine.draw import draw_squares, letterbox
 
 # === CONFIGURAÇÕES ===
 MODEL_PATH = "runs/detect/train3/weights/best.onnx"
