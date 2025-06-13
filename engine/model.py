@@ -1,4 +1,6 @@
 import numpy as np
+from settings import conf
+
 
 def get_vertices(box):
     x1, y1, x2, y2 = box
@@ -19,11 +21,21 @@ class Peca:
         x = x1
         y = y1
 
+        self.gradiente = None
+        self.det = det
         self.vertice = (int(x), int(y), int(w), int(h))
         self.area = int(w) * int(h)
         self.multi = x * y
         self.confidence = det[4]
         self.class_id = int(det[5])
+
+    @property
+    def is_black(self):
+        return self.gradiente >= conf.DIVISAODEGRADIENTE
+
+    @property
+    def is_white(self):
+        return not self.is_black
 
     @property
     def x(self):

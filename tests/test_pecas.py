@@ -30,7 +30,7 @@ try:
         pecas = get_pecas(frame, 32)
         if len(pecas) < 32:
             continue
-        
+
         if not MAPA:
             MAPA = get_mapa(pecas)
 
