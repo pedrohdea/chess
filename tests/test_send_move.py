@@ -1,6 +1,9 @@
-from engine.send_move import send_move
-import serial
 import time
+
+import serial
+
+from engine.send_move import send_move
+from settings import conf
 
 ENDERECO_USB = "/dev/ttyACM0"
 

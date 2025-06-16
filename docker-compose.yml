@@ -11,3 +11,9 @@ services:
     stdin_open: true
     tty: true
     command: yolo detect train data=dataset/data.yaml model=yolov8n.pt epochs=100 imgsz=640,360 batch=32
+
+  opencv:
+    build: .
+    network_mode: 'host'
+    volumes:
+        - ./:/app

@@ -27,7 +27,7 @@ def draw_yolo(frame, det):
     cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), color, thickness)
 
     # Prepara o texto do rótulo
-    label = f"ID: {class_id} C: {conf:.2f}"
+    label = f"C: {conf:.2f}"
 
     # Posição do texto (acima do retângulo)
     text_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.4, 1)[0]

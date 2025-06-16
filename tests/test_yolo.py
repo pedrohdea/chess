@@ -6,7 +6,7 @@ from engine.detect import get_yolo_detect, get_pecas_colors
 from engine.predict import get_pecas
 
 
-IMAGE_PATH = "positivas/1749519069.4164693.jpg"  # Make sure this path is correct
+IMAGE_PATH = "dataset/valid/images/1749319702_980748_jpg.rf.b53ccf31f9dc4507ff3ce493c87a41a9.jpg"
 img = cv2.imread(IMAGE_PATH)
 
 # Marca o tempo de início da inferência

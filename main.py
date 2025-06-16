@@ -10,6 +10,7 @@ from engine.detect import get_yolo_detect, get_pecas_colors
 from engine.predict import get_command, get_mapa, get_matrix, get_pecas
 from engine.send_move import send_move
 from stockfish import Stockfish
+from settings import conf
 
 LOG_LEVEL = "INFO"
 
@@ -32,7 +33,7 @@ logger.add(
 )
 
 # SETUP
-ENDERECO_USB = "/dev/ttyACM0"
+ENDERECO_USB = conf.ENDERECO_USB
 ARDUINO = serial.Serial(port=ENDERECO_USB, baudrate=9600, timeout=1)
 
 MAPA = None
