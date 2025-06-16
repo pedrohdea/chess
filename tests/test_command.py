@@ -1,4 +1,5 @@
 from numpy import array
+
 from engine.predict import get_command
 
 command = "a8b3"
@@ -21,4 +22,4 @@ modify_frame = start_matrix = array(
 )
 
 command = get_command(modify_frame)
-assert command=='a7a6'
+assert command == "a7a6"

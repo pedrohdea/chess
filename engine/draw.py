@@ -1,5 +1,5 @@
-import numpy as np
 import cv2
+import numpy as np
 from loguru import logger
 
 # === FUNÇÕES AUXILIARES ===
@@ -33,6 +33,7 @@ def draw_squares(img, pred, ratio, dwdh):
             1,
         )
     return img
+
 
 def letterbox(im, new_shape=(640, 640), color=(114, 114, 114)):
     """Redimensiona mantendo a proporção e adiciona padding (como o Ultralytics faz)"""

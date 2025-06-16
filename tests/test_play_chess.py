@@ -1,7 +1,7 @@
-from ultralytics import YOLO
 import cv2
 import numpy as np
 from loguru import logger
+from ultralytics import YOLO
 
 model = YOLO("data/model_.onnx")
 
@@ -47,7 +47,7 @@ class Peca:
         return self.vertice[3]
 
     def __repr__(self) -> str:
-        return f'<{self.vertice}>'
+        return f"<{self.vertice}>"
 
     def __eq__(self, __value: object) -> bool:
         a = self.multi
@@ -156,21 +156,20 @@ for peca in pecas:
     m_y = int((peca.y - crop_vert[1]) / quadrado[1])
     frame_matrix[m_x, m_y] = 1
 
-ALFABHETIC = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+ALFABHETIC = ["a", "b", "c", "d", "e", "f", "g", "h"]
 
 modify_frame = last_frame - frame_matrix
 old = np.where(modify_frame == 1)
 old = old[0][0], old[1][0]
-old = f'{ALFABHETIC[old[1]]}{old[0]+1}'
+old = f"{ALFABHETIC[old[1]]}{old[0]+1}"
 new = np.where(modify_frame == -1)
 new = new[0][0], new[1][0]
-new = f'{ALFABHETIC[new[1]]}{new[0]+1}'
-command = f'{old}{new}'
+new = f"{ALFABHETIC[new[1]]}{new[0]+1}"
+command = f"{old}{new}"
 
 from stockfish import Stockfish
 
-
-stockfish = Stockfish(path='stockfish/stockfish-ubuntu-x86-64')
+stockfish = Stockfish(path="stockfish/stockfish-ubuntu-x86-64")
 
 stockfish.make_moves_from_current_position([command])  # bot
 logger.debug(stockfish.get_board_visual())

@@ -1,5 +1,6 @@
-from loguru import logger
 from time import sleep
+
+from loguru import logger
 
 
 def send_move(arduino, move: str):

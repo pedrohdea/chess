@@ -14,7 +14,7 @@ while True:
     # Atualiza a mesma janela com o novo frame
     cv2.imshow("Video", frame)
 
-    if cv2.waitKey(30) & 0xFF == ord('q'):
+    if cv2.waitKey(30) & 0xFF == ord("q"):
         break
 
 cap.release()

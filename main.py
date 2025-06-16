@@ -6,11 +6,11 @@ import numpy as np
 import serial
 from loguru import logger
 
-from engine.detect import get_yolo_detect, get_pecas_colors
+from engine.detect import get_pecas_colors, get_yolo_detect
 from engine.predict import get_command, get_mapa, get_matrix, get_pecas
 from engine.send_move import send_move
-from stockfish import Stockfish
 from settings import conf
+from stockfish import Stockfish
 
 LOG_LEVEL = "INFO"
 

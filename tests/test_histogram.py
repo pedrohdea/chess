@@ -1,7 +1,8 @@
 # Reimportando bibliotecas após reset
 import os
-import matplotlib.pyplot as plt
 from collections import Counter
+
+import matplotlib.pyplot as plt
 
 # # Aplicar nos 3 conjuntos
 # ("dataset/train/images", "dataset/train/labels")
@@ -23,7 +24,12 @@ if os.path.exists(labels_dir):
 
     # Gerar histograma
     plt.figure(figsize=(8, 5))
-    plt.hist(objetos_por_imagem, bins=range(0, max(objetos_por_imagem)+2), edgecolor='black', align='left')
+    plt.hist(
+        objetos_por_imagem,
+        bins=range(0, max(objetos_por_imagem) + 2),
+        edgecolor="black",
+        align="left",
+    )
     plt.title("Distribuição de Objetos por Imagem")
     plt.xlabel("Número de Objetos")
     plt.ylabel("Quantidade de Imagens")
@@ -40,13 +46,15 @@ if os.path.exists(labels_dir):
 
     # Gerar gráfico de barras
     plt.figure(figsize=(8, 5))
-    plt.bar(objetos, frequencias, color='skyblue', edgecolor='black')
+    plt.bar(objetos, frequencias, color="skyblue", edgecolor="black")
     plt.title("Quantidade de Imagens por Número de Objetos")
     plt.xlabel("Número de Objetos na Imagem")
     plt.ylabel("Quantidade de Imagens")
     plt.xticks(objetos)
-    plt.grid(axis='y')
+    plt.grid(axis="y")
     plt.tight_layout()
     plt.show()
 else:
-    print("Diretório de labels não encontrado. Por favor, envie a pasta 'train/labels'.")
+    print(
+        "Diretório de labels não encontrado. Por favor, envie a pasta 'train/labels'."
+    )

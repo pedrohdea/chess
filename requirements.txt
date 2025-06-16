@@ -4,6 +4,7 @@ Pillow
 pytest
 iPython
 black
+isort
 loguru
 requests
 stockfish

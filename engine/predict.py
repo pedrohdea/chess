@@ -1,14 +1,15 @@
 import logging
+import time
+
+import cv2
 import numpy as np
 import onnxruntime as ort
-from cv2.typing import MatLike
-from engine.model import Peca
-from engine.draw import letterbox
 from cv2 import UMat
-import time
+from cv2.typing import MatLike
 from loguru import logger
-import cv2
-from engine.draw import draw_squares
+
+from engine.draw import draw_squares, letterbox
+from engine.model import Peca
 
 # Cria a sessão ONNX com OpenVINO
 # === CONFIGURAÇÕES ===
@@ -44,7 +45,7 @@ def get_predict(frame: UMat):
     if DEBUG:
         frame = draw_squares(frame, pred, ratio, dwdh)
         cv2.imshow("DEBUG squares", frame)
-        
+
     return pred, ratio, dwdh
 
 
@@ -67,7 +68,7 @@ def get_threshold(trust_list: list, qt_min: int) -> float:
     threshold = min(trust_list[:qt_min])
 
     logger.debug(f"threshold {threshold}")
-    if threshold<CONFIDENCE:
+    if threshold < CONFIDENCE:
         threshold = CONFIDENCE
 
     return threshold
@@ -88,6 +89,7 @@ def get_pecas(pred, qt_min: int) -> list:
 
     logger.debug(f"Encontrado {len(pecas)} peças confiáveis após o threshold.")
     return pecas
+
 
 def agrupar_valores_por_distribuicao(valores, grupos=8):
     valores_ordenados = sorted(valores)
@@ -161,8 +163,10 @@ def get_matrix(pecas, mapa):
     logger.warning("Matrix descartada, frame obstruído")
     return None
 
+
 ALFABHETIC = ["a", "b", "c", "d", "e", "f", "g", "h"]
 ALFABHETIC.reverse()
+
 
 def get_command(modify_frame) -> str:
 

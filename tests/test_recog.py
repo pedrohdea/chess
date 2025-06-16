@@ -1,9 +1,10 @@
-import cv2
-import time
 import os
-from loguru import logger
-from engine.detect import get_yolo_detect
+import time
 
+import cv2
+from loguru import logger
+
+from engine.detect import get_yolo_detect
 
 # === EXIBIÇÃO ===
 os.environ["QT_QPA_PLATFORM"] = "xcb"  # evita conflitos no Linux
@@ -31,7 +32,7 @@ try:
         # === EXIBIÇÃO ===
         cv2.imshow("YOLO ONNX Webcam", annotated_display_frame)
 
-        if cv2.waitKey(30) & 0xFF == ord('q'):
+        if cv2.waitKey(30) & 0xFF == ord("q"):
             break
 
 finally:

@@ -3,7 +3,7 @@ import numpy as np
 import PIL.Image
 
 # Load a model whose input type is "Image".
-model = ct.models.MLModel('model.mlmodel')
+model = ct.models.MLModel("model.mlmodel")
 
 Height = 20  # use the correct input image height
 Width = 60  # use the correct input image width
@@ -20,12 +20,12 @@ def load_image(path, resize_to=None):
 
 
 # Load the image and resize using PIL utilities.
-_, img = load_image('positivas/greygato7.png', resize_to=(Width, Height))
-out_dict = model.predict({'image': img})
+_, img = load_image("positivas/greygato7.png", resize_to=(Width, Height))
+out_dict = model.predict({"image": img})
 
 # Scenario 2: load an image from a NumPy array.
 shape = (Height, Width, 3)  # height x width x RGB
 data = np.zeros(shape, dtype=np.uint8)
 # manipulate NumPy data
 pil_img = PIL.Image.fromarray(data)
-out_dict = model.predict({'image': pil_img})
+out_dict = model.predict({"image": pil_img})

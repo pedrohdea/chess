@@ -1,7 +1,9 @@
-from pi74HC595 import pi74HC595
+import multiprocessing
+import time
+
 import RPi.GPIO as gpio
-import multiprocessing, time
 from loguru import logger
+from pi74HC595 import pi74HC595
 
 
 def liga_tabuleiro(tabuleiro_1: list, tabuleiro_2: list):
@@ -12,10 +14,10 @@ def liga_tabuleiro(tabuleiro_1: list, tabuleiro_2: list):
         # Ajustar time para 0.015
         time.sleep(1)
         # shift_register.set_by_list(tabuleiro_1)
-        logger.debug(f'1: {tabuleiro_1}')
+        logger.debug(f"1: {tabuleiro_1}")
         time.sleep(1)
         # shift_register.set_by_list(tabuleiro_2)
-        logger.debug(f'2: {tabuleiro_2}')
+        logger.debug(f"2: {tabuleiro_2}")
 
     # shift_register.get_values()
     ##[0, 0, 0, 0, 0, 0, 0, 0]
@@ -30,7 +32,7 @@ def get_vetor_led(posicao_xadrez):
     x1, y1 = posicao_xadrez[0], posicao_xadrez[1]
     x2, y2 = posicao_xadrez[2], posicao_xadrez[3]
 
-    alfabeto = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+    alfabeto = ["a", "b", "c", "d", "e", "f", "g", "h"]
     x1 = alfabeto.index(x1)
     y1 = int(y1)
     x2 = alfabeto.index(x2)
@@ -52,19 +54,17 @@ def get_vetor_led(posicao_xadrez):
     return tabuleiro_1, tabuleiro_2
 
 
-tabuleiro_1, tabuleiro_2 = get_vetor_led('a8a6')
+tabuleiro_1, tabuleiro_2 = get_vetor_led("a8a6")
 
 
-proc = multiprocessing.Process(
-    target=liga_tabuleiro, args=(tabuleiro_1, tabuleiro_2)
-)
+proc = multiprocessing.Process(target=liga_tabuleiro, args=(tabuleiro_1, tabuleiro_2))
 proc.start()
 logger.debug(proc)
 # Terminate the process
 t = 20
 while t:
-    t -=1
+    t -= 1
     time.sleep(0.5)
-    logger.debug('AAAAAAAAAAAAAAAAA')
+    logger.debug("AAAAAAAAAAAAAAAAA")
 
 proc.terminate()  # sends a SIGTERM

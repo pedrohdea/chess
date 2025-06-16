@@ -6,7 +6,7 @@ def testar_resolucoes(device=0):
     resolucoes = [
         (160, 120),
         (320, 240),
-        (640, 360), # único funcional
+        (640, 360),  # único funcional
         (640, 480),
         (800, 600),
         (1024, 768),

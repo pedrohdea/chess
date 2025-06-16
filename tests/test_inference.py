@@ -1,7 +1,8 @@
-import cv2
 import time
-from ultralytics import YOLO
+
+import cv2
 from loguru import logger
+from ultralytics import YOLO
 
 # Carrega o modelo treinado
 model = YOLO("runs/detect/train3/weights/best.pt")
@@ -40,7 +41,9 @@ try:
         cv2.imshow("Detecção YOLOv8", annotated)
 
         # Aguarda o usuário ver a imagem
-        logger.debug("Visualizando resultado. Feche a janela ou pressione qualquer tecla nela.")
+        logger.debug(
+            "Visualizando resultado. Feche a janela ou pressione qualquer tecla nela."
+        )
         cv2.waitKey(0)  # trava até interação com a janela
 
         # Fecha a janela após visualização

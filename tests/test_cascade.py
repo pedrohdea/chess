@@ -1,10 +1,11 @@
-import cv2 as cv
-import numpy as np
 import os
 from time import time
-from windowcapture import WindowCapture
-from vision import Vision
+
+import cv2 as cv
+import numpy as np
 from loguru import logger
+from vision import Vision
+from windowcapture import WindowCapture
 
 # Change the working directory to the folder this script is in.
 # Doing this because I'll be putting the files from each video in their own folder on GitHub
@@ -12,15 +13,15 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
 # initialize the WindowCapture class
-wincap = WindowCapture('Test Cascade Chess')
+wincap = WindowCapture("Test Cascade Chess")
 
 # load the trained model
-cascade_limestone = cv.CascadeClassifier('cascade/cascade.xml')
+cascade_limestone = cv.CascadeClassifier("cascade/cascade.xml")
 # load an empty Vision class
 vision_limestone = Vision(None)
 
 loop_time = time()
-while(True):
+while True:
 
     # get an updated image of the game
     screenshot = wincap.get_screenshot()
@@ -32,10 +33,10 @@ while(True):
     detection_image = vision_limestone.draw_rectangles(screenshot, rectangles)
 
     # display the images
-    cv.imshow('Matches', detection_image)
+    cv.imshow("Matches", detection_image)
 
     # debug the loop rate
-    logger.debug('FPS {}'.format(1 / (time() - loop_time)))
+    logger.debug("FPS {}".format(1 / (time() - loop_time)))
     loop_time = time()
 
     # press 'q' with the output window focused to exit.
@@ -43,12 +44,12 @@ while(True):
     # save as a negative image.
     # waits 1 ms every loop to process key presses
     key = cv.waitKey(1)
-    if key == ord('q'):
+    if key == ord("q"):
         cv.destroyAllWindows()
         break
-    elif key == ord('f'):
-        cv.imwrite('positive/{}.jpg'.format(loop_time), screenshot)
-    elif key == ord('d'):
-        cv.imwrite('negative/{}.jpg'.format(loop_time), screenshot)
+    elif key == ord("f"):
+        cv.imwrite("positive/{}.jpg".format(loop_time), screenshot)
+    elif key == ord("d"):
+        cv.imwrite("negative/{}.jpg".format(loop_time), screenshot)
 
-logger.debug('Done.')
+logger.debug("Done.")

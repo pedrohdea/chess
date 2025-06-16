@@ -1,7 +1,9 @@
-import cv2
 import time
-from engine.predict import get_pecas, get_matrix, get_mapa
+
+import cv2
 from loguru import logger
+
+from engine.predict import get_mapa, get_matrix, get_pecas
 
 # === INICIALIZA WEBCAM ===
 logger.debug("[INFO] Iniciando webcam...")
