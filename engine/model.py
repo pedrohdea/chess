@@ -22,7 +22,7 @@ class Peca:
         x = x1
         y = y1
 
-        self.gradiente = None
+        self.gradiente = 1
         self.det = det
         self.vertice = (int(x), int(y), int(w), int(h))
         self.area = int(w) * int(h)

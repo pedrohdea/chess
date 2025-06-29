@@ -46,8 +46,8 @@ start_matrix = np.array(
         [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
-        [1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1],
+        [3, 3, 3, 3, 3, 3, 3, 3],
+        [3, 3, 3, 3, 3, 3, 3, 3],
     ]
 )
 last_frame = None
@@ -65,6 +65,7 @@ while not numero_de_jogadas:
 
     pred_raw, frame = get_yolo_detect(frame)
     pecas = get_pecas(pred_raw, 32)
+    get_pecas_colors(pecas, frame)
 
     if len(pecas) < 32:
         logger.info("Procurando 32 peças pra inicialização...")
@@ -84,7 +85,7 @@ while not numero_de_jogadas:
 # LOOP
 try:
     while True:
-        loop_time = time()
+        start = time()
 
         ret, frame = cap.read()
         if not ret:
@@ -126,6 +127,10 @@ try:
             last_frame = frame_matrix
             move = STOCKFISH.get_best_move()
             send_move(ARDUINO, move)
+
+            end = time()
+            elapsed = end - start
+            logger.info(f"Tempo decorrido: {elapsed:.4f} segundos")
         else:
             logger.debug("Nenhum movimento detectado...")
 

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Configurations:
-    DIVISAODEGRADIENTE: float = None
+    DIVISAODEGRADIENTE: float = 0.5
     ENDERECO_USB: str = "/dev/ttyACM0"
 
 

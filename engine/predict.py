@@ -5,7 +5,6 @@ import cv2
 import numpy as np
 import onnxruntime as ort
 from cv2 import UMat
-from cv2.typing import MatLike
 from loguru import logger
 
 from engine.draw import draw_squares, letterbox
@@ -184,6 +183,9 @@ def validate_frame(modify_frame):
     """
     detected = []
 
+    if np.count_nonzero(modify_frame) != 2:
+        return None
+
     for move_type, (from_val, to_val) in MOVE_PATTERNS.items():
         if np.count_nonzero(modify_frame == from_val) == 1 and np.count_nonzero(modify_frame == to_val) == 1:
             detected.append(move_type)
@@ -217,6 +219,6 @@ def get_command(modify_frame):
     to_coord = f"{ALFABHETIC[to_pos[1]]}{to_pos[0] + 1}"
     command = f"{from_coord}{to_coord}"
     
-    logger.debug(f'Comando encontrado na matriz de diferença {command}')
+    logger.success(f'Comando encontrado na matriz de diferença {command}, tipo de movimento {move_type}')
 
     return command
