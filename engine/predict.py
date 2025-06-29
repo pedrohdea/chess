@@ -153,8 +153,8 @@ def get_matrix(pecas, mapa):
 
         if 0 <= row < 8 and 0 <= col < 8:
             if matrix[row, col] == 1:
-                logger.debug(f"[COLISÃO] Outra peça já estava em ({row}, {col})")
-            matrix[row, col] = 1
+                logger.warning(f"[COLISÃO] Outra peça já estava em ({row}, {col})")
+            matrix[row, col] = 1 if p.is_black else 3 # 1 = Black; 3 = White
 
     qtd_pecas = np.count_nonzero(matrix)
     if qtd_pecas == len(pecas):
@@ -167,14 +167,56 @@ def get_matrix(pecas, mapa):
 ALFABHETIC = ["a", "b", "c", "d", "e", "f", "g", "h"]
 ALFABHETIC.reverse()
 
+MOVE_PATTERNS = {
+    "BM": (1, -1),
+    "WM": (3, -3),
+    "BC": (1, 2),
+    "WC": (3, -2),
+}
 
-def get_command(modify_frame) -> str:
+def validate_frame(modify_frame):
+    """
+    Valida a matriz de diferença e retorna o tipo de jogada detectada, se houver exatamente uma.
 
-    old = np.where(modify_frame == 1)
-    old = old[0][0], old[1][0]
-    old = f"{ALFABHETIC[old[1]]}{old[0]+1}"
-    new = np.where(modify_frame == -1)
-    new = new[0][0], new[1][0]
-    new = f"{ALFABHETIC[new[1]]}{new[0]+1}"
-    command = f"{old}{new}"
+    Returns:
+        str: Tipo de jogada ('BM', 'WM', 'BC', 'WC') se válida.
+        None: Se nenhuma ou múltiplas jogadas válidas forem encontradas.
+    """
+    detected = []
+
+    for move_type, (from_val, to_val) in MOVE_PATTERNS.items():
+        if np.count_nonzero(modify_frame == from_val) == 1 and np.count_nonzero(modify_frame == to_val) == 1:
+            detected.append(move_type)
+
+    return detected[0] if len(detected) == 1 else None
+
+
+def get_command(modify_frame):
+    """
+    Gera o comando de jogada a partir de uma matriz de diferença validada.
+
+    Args:
+        modify_frame (np.ndarray): matriz de diferença 8x8.
+        return_type (bool): se True, retorna também o tipo de jogada.
+
+    Returns:
+        str: comando 'a2a3'
+    """
+    logger.debug('Procurando comando na matriz de diferença')
+
+    move_type = validate_frame(modify_frame)
+    if move_type is None:
+        raise ValueError("Jogada inválida ou ambígua")
+
+    from_val, to_val = MOVE_PATTERNS[move_type]
+
+    from_pos = np.argwhere(modify_frame == from_val)[0]
+    to_pos = np.argwhere(modify_frame == to_val)[0]
+
+    from_coord = f"{ALFABHETIC[from_pos[1]]}{from_pos[0] + 1}"
+    to_coord = f"{ALFABHETIC[to_pos[1]]}{to_pos[0] + 1}"
+    command = f"{from_coord}{to_coord}"
+    
+    logger.debug(f'Comando encontrado na matriz de diferença {command}')
+
     return command

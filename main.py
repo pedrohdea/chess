@@ -7,7 +7,7 @@ import serial
 from loguru import logger
 
 from engine.detect import get_pecas_colors, get_yolo_detect
-from engine.predict import get_command, get_mapa, get_matrix, get_pecas
+from engine.predict import get_command, get_mapa, get_matrix, get_pecas, validate_frame
 from engine.send_move import send_move
 from settings import conf
 from stockfish import Stockfish
@@ -103,10 +103,7 @@ try:
         if frame_matrix is None:
             continue
         modify_frame = last_frame - frame_matrix
-        count_pos = np.count_nonzero(modify_frame == 1)
-        count_neg = np.count_nonzero(modify_frame == -1)
-
-        if count_pos == 1 and count_neg == 1:
+        if validate_frame(modify_frame):
             command = get_command(modify_frame)
             trust_command = command
             if command != trust_command:
