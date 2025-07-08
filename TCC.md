@@ -64,12 +64,8 @@ As CNNs fazem parte do conceito abrangente de IA, explicado por Goodfellow et al
      **Aprendizado Profundo**: É uma técnica específica de aprendizado de representação baseada em redes neurais profundas, permitindo modelar dados complexos por meio de várias camadas hierárquicas.
 
 
-
-[h]
     
-    ![Imagem](images/venn.pdf)
-    
-    
+![Imagem](images/venn.pdf)
 
 
 Dentro do que tange IA, a estrutura característica de uma CNN é composta por camadas convolucionais, de *pooling*, conectadas e camadas de ativação. A camada convolucional aplica filtros para extrair características específicas de uma imagem, enquanto a camada de pooling reduz a dimensionalidade, preservando informações essenciais e melhorando a eficiência computacional. Já as camadas totalmente conectadas e de ativação são responsáveis por classificar as informações extraídas em categorias predefinidas. Goodfellow, Bengio e Courville definem a convolução: "A convolução é uma operação matemática que permite a extração de características locais, enquanto o pooling reduz a dimensionalidade dos mapas de características, tornando as representações compactas e robustas às variações nos dados de entrada" .
@@ -148,12 +144,8 @@ Embora este trabalho tenha como foco o desenvolvimento de um sistema automatizad
 O sistema integra visão computacional e automação, criando uma interface interativa de reconhecimento e resposta visual em um tabuleiro de xadrez. A ideia central foi desenvolver um tabuleiro onde o usuário possa jogar xadrez com uma máquina, movimentando as peças no tabuleiro, e aguardando o computador acender o LED para identificar a jogada da máquina.
 
 O funcionamento geral do sistema combina um microcontrolador, responsável pelo controle da matriz de LEDs, recebendo os comandos de um computador, que capta as imagens do tabuleiro com uma *webcam* e reconhece as jogadas utilizando IA treinada em visão computacional, através de CNNs para reconhecer padrões visuais. Como explicitado na Figura .
-
-[h]
     
-    ![Imagem](images/FluxogramaTCC.png)
-    
-    
+![Imagem](images/FluxogramaTCC.png)
 
 
 Inicialmente, tentou-se usar o Raspberry Pi para executar toda a IA diretamente no tabuleiro. No entanto, o dispositivo não apresentou desempenho suficiente para processar as imagens e realizar a inferência em tempo aceitável. Por isso, optou-se por transferir o processamento da IA para um computador externo. Essa separação se mostrou necessária, já que o microcontrolador não consegue realizar o reconhecimento com a velocidade exigida e, ao mesmo tempo, controlar os LEDs, que precisam alternar constantemente entre as casas do tabuleiro. Com isso, o Arduino passou a ser usado apenas para acionar os LEDs, tarefa para a qual é plenamente capaz.
@@ -164,12 +156,8 @@ Para facilitar o aprendizado de máquina, o tabuleiro e as peças foram constru�
 ### Tabuleiro
 
 O tabuleiro foi montado em MDF com corte a laser conforme projeto integrador com colega Rafael Luiz Casa, que possui suporte para *webcam*, circuito impresso dos *shift-registers* conectados aos LEDs, alimentação dos componentes eletrônicos e base para a chapa de acrílico adesivada com o layout do tabuleiro de xadrez Figura  . A escolha deste material se deu por ser translúcido e visualmente agradável, permitindo a propagação uniforme da luz dos LEDs, melhorando a comunicação visual com o jogador.
-
-[h]
     
-    ![Imagem](images/base.jpeg)
-    
-    
+![Imagem](images/base.jpeg)
 
 
 O sistema também inclui 16 peças de xadrez em MDF, sendo os objetos principais a serem reconhecidos pela IA. Essas peças são especialmente projetadas para que o sistema de visão computacional possa identificá-las e monitorar seus movimentos durante o jogo. Com o decorrer do projeto, foi possível usar peças de xadrez reais, comumente comercializadas nos formatos conhecidos e clássicos, graças ao melhor entendimento e treinamento da IA de reconhecimento visual.
@@ -181,24 +169,19 @@ No tabuleiro de xadrez, os LEDs são dispostos em uma matriz 8x8, onde cada LED 
 Para controlar os 64 LEDs sem ocupar 16 saídas digitais do controlador, são usados dois *CIs Shift Register 74HC595* em série. Essa configuração permite utilizar apenas três pinos do controlador para operar a matriz de LEDs. O *shift-registers* atua como um conversor serial-paralelo, onde os dados de estado para cada saída são transmitidos ao CI em formato serial, utilizando um pino para dados e outro para o clock. A cada pulso de clock, o CI desloca o estado para a saída seguinte, e a última saída do primeiro CI é conectada à entrada do segundo CI, permitindo que ambos operem em sequência. Um terceiro pino do controlador é utilizado para iniciar e finalizar a recepção de dados. Assim, o circuito integrado com oito transistores permite o controle da iluminação de cada LED, protegendo o Arduino de sobrecarga e garantindo uma iluminação estável e duradoura. A Figura  exibe o diagrama esquemático da placa, e a Figura  mostra a PCI fabricada com os componentes soldados.
 
 % A Figura  exibe o diagrama esquemático da placa, a Figura  mostra o cabeamento entre os LEDs e a Figura  mostra a PCI fabricada, ainda com os componentes soldados.
-
-[h]
 	
 	![Imagem](images/esquematico_LEDs.pdf)
 	
 	
 
 
-% [h]
-% 	
-% 	![Imagem](images/ligacoes.jpeg)
+%% 	
+% 	![Imagem](images/ligacoes.png)
 % 	
 % 	
 % 
-
-[h]
 	
-	![Imagem](images/shiftplaca.jpeg)
+	![Imagem](images/shiftplaca.png)
 	
 	
 
@@ -216,26 +199,14 @@ As imagens capturadas das peças dispostas pelo tabuleiro são convertidas em da
 O modelo de IA, CNN, funciona passando as imagens, e entrega os contornos das peças. Mas antes, o modelo deve ser treinado. Para treinar é necessário definir as peças e não-peças, em uma coletânea de imagens. Nesse contexto, o Roboflow foi utilizado para organizar e anotar imagens do tabuleiro de xadrez, marcando posições das peças diretamente na ferramenta. Este serviço permite ao usuário, desenvolver aplicações de *machine learning* e *deep learning* e viabiliza o uso remoto de uma GPU, para serem processados os treinamentos. Para a confecção do mesmo, foi utilizado o método YOLO, pois as redes convolucionais têm sido fundamentais para avanços em visão computacional, sendo a arquitetura preferida para modelar dados visuais devido à sua eficiência e eficácia na captura de padrões hierárquicos . 
 
 Para atingir um modelo com alta precisão, é necessário dispor de um *dataset*, composto por imagens de treinamento devidamente anotadas com os objetos a serem identificados, como ilustrado na Figura . Conforme demonstrado na Figura , foram anotadas 112 imagens contendo um total de 3.241 objetos. Repartindo o *dataset* aleatoriamente em três grupos: 80 \% base de treinamento, 10 \% base de validação e 10 \% base de testes, obtemos o modelo final atingindo uma precisão de 99,95 \%, indicando que praticamente todas as detecções realizadas correspondiam a peças reais. A revocação (*recall*), que mede a capacidade de identificar todas as peças presentes, alcançou 97,85 \%, evidenciando uma cobertura quase completa das ocorrências reais. A métrica *mAP@50*, que avalia a precisão considerando uma sobreposição mínima de 50 \% entre a detecção e o objeto real, foi de 98,07 \%. Enquanto a *mAP@50-95*, que aplica critérios progressivamente mais rigorosos de sobreposição, atingiu 86,31 \%, evidenciado na Figura .
+    
+![Imagem](images/annotate-roboflow.png)
 
-[h]
     
-    ![Imagem](images/annotate-roboflow.png)
-    
-    
+![Imagem](images/hist.png)
 
-
-[h]
     
-    ![Imagem](images/hist.png)
-    
-    
-
-
-[h]
-    
-    ![Imagem](images/mAP50-95.png)
-    
-    
+![Imagem](images/mAP50-95.png)
 
 
 Assim que o modelo de IA revela o contorno das peças, é calculado o centroide do elemento, e mapeado na matriz do tabuleiro, para encontrar em qual posição no tabuleiro a peça se encontra. Com a posição, descrita como A1 até H8, conforme Figura  da base, é possível calcular a jogada.
@@ -316,31 +287,19 @@ R = A - B =
 Em jogadas onde uma peça captura a peça do oponente, a diferença entre as matrizes tem apenas uma posição, sendo necessário definir a cor da peça, e assim, da mesma forma anterior, compara-se a matriz das peças pretas com a matriz das peças brancas para definir a jogada.
 
 Além de calcular as jogadas do usuário, a *engine* verifica a jogada realizada, assegurando que estejam conforme as regras do xadrez. Sempre que o usuário realiza um movimento, a *engine* valida a jogada, identificando e sinalizando qualquer irregularidade ou movimento inválido, exibido na Figura . Após a *engine* faz a jogada do oponente, calculando o movimento das peças, e sinalizando pelos LEDs. Assim que o usuário mover a peça até o LED acesso, o sistema identifica que a jogada da máquina foi concluída. E começa a ler novamente a jogada do usuário. Quaisquer não conformidades com as regras do xadrez, ou erros no reconhecimento, levantaram avisos no computador, ignorando aquela interação.
-
-[h]
     
-    ![Imagem](images/logs.jpeg)
-    
-    
+![Imagem](images/logs.jpeg)
 
 
 ### Protótipo
 
 O protótipo é validado por meio da realização de uma partida completa de xadrez. Com esse objetivo, os elementos convergem na montagem exposta nas Figuras  e . A primeira figura demonstra as peças utilizadas, a disposição da câmera e o LED demonstrando a jogada para capturar o peão do oponente. Enquanto a Figura  mostra o computador local, conectado com USB ao Arduino, enviando comandos.
-
-[h]
     
-    ![Imagem](images/Tabuleiro.jpeg)
-    
-    
+![Imagem](images/Tabuleiro.jpeg)
 
 
-
-[h]
     
-    ![Imagem](images/Computador.jpeg)
-    
-    
+![Imagem](images/Computador.jpeg)
 
 
 Explicitada a parte física do protótipo, a operação do sistema ao nível de software ocorre durante a execução da partida. O processo é iniciado com uma etapa de configuração inicial (*setup*) e, em seguida, entra-se em um ciclo contínuo de reconhecimento e resposta. Parâmetros como portas de comunicação, nível de dificuldade da *engine*, tempo de espera (*timeout*), entre outros, são definidos previamente por meio de um arquivo de configuração.
@@ -417,39 +376,23 @@ Por fim, o F1-Score combina a precisão e a revocação em uma métrica única, 
 Essa métrica é especialmente útil quando é necessário equilibrar a capacidade do sistema de evitar falsos positivos e negativos, oferecendo uma avaliação mais robusta do desempenho geral do modelo.
 
 No que tange o modelo de reconhecimento visual, podemos levantar através dos dados do *dataset* e do modelo gerado pelo *ultralytics* (biblioteca em Python do YOLO) as seguintes métricas de precisão e recall, evidenciadas nas Figuras  e .
+    
+![Imagem](images/Precisão.png)
 
-[h]
     
-    ![Imagem](images/Precisão.png)
-    
-    
-
-
-[h]
-    
-    ![Imagem](images/Revocação.png)
-    
-    
+![Imagem](images/Revocação.png)
 
 
 Uma métrica adicional relevante no YOLO é a *box loss*, que avalia o erro na predição da localização dos objetos, medindo a diferença entre o contorno delimitado real do objeto (ground truth) e a delimitação gerada pelo modelo. Essa métrica reflete o quão precisamente a rede consegue enquadrar os objetos detectados. 
 
 O treinamento do modelo de IA é estruturado em épocas, que representam ciclos completos de processamento do conjunto de dados. A cada época, o modelo percorre todas as imagens do *dataset*, ajustando seus parâmetros internos visando melhorar seu desempenho. Com o avanço das épocas, observa-se uma redução gradual no erro de localização das peças, evidenciando o processo de aprendizado do modelo, mostrado na Figura .
-
-[h]
     
-    ![Imagem](images/Val_Box_Loss.png)
-    
-    
+![Imagem](images/Val_Box_Loss.png)
 
 
 Dentro do contexto de reconhecimento de imagem, foi aplicada a técnica de validação cruzada *k-fold* com divisão em três partes (k=3). Em cada rodada, dois grupos foram usados para treino e um para validação. Isso permitiu avaliar o desempenho do modelo YOLO de forma mais robusta, garantindo que todos os dados fossem utilizados em diferentes combinações de treino e validação. O gráfico da Figura  apresenta os resultados individuais de cada partição, além da média das métricas, permitindo uma comparação entre as execuções.
-
-[h]
     
-    ![Imagem](images/kfold.png)
-    
-    
+![Imagem](images/kfold.png)
 
 
 Essas métricas fornecem uma base quantitativa para ajustar e validar o sistema de reconhecimento de peças de xadrez, assegurando que ele opere com alta precisão e confiabilidade. Além disso, as métricas ajudam a identificar os pontos fracos do modelo, permitindo ajustes direcionados que maximizem sua eficiência e aplicabilidade.
