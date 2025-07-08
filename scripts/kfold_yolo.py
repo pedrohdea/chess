@@ -5,9 +5,9 @@ from sklearn.model_selection import KFold
 from ultralytics import YOLO
 
 # Configurações
-dataset_dir = "dataset_dividido"
-images_dir = os.path.join(dataset_dir, "images")
-labels_dir = os.path.join(dataset_dir, "labels")
+dataset_dir = "new_dataset"
+images_dir = os.path.join(dataset_dir, "train/images")
+labels_dir = os.path.join(dataset_dir, "train/labels")
 output_dir = "kfold_runs"
 model_path = "yolov8n.pt"  # ou best.pt
 

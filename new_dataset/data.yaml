@@ -1,0 +1,15 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 1
+names: ['piece']
+
+roboflow:
+  workspace: chess-bjkwh
+  project: chess-3d
+  version: 3
+  license: MIT
+  url: https://universe.roboflow.com/chess-bjkwh/chess-3d/dataset/2
+
+# yolo detect train data=new_dataset/data.yaml model=yolov8n.pt epochs=100 imgsz=640,360 augment=True

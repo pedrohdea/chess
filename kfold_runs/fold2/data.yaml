@@ -1,0 +1,4 @@
+path: kfold_runs/fold2
+train: train/images
+val: val/images
+names: ['class0']
